@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from entity_extractor import extract_entities, extract_svo
+from entity_extractor import extract_entities, extract_svo, resolve_coreferences
 from graph_builder import build_graph
 
 st.set_page_config(page_title="Context Analyzer")
@@ -24,11 +24,12 @@ if st.button("Extract Relationships"):
     if text_input.strip():
         with st.spinner("Extracting relationships..."):
             svos = extract_svo(text_input)
+            entities = extract_entities(text_input)
+            svos_resolved = resolve_coreferences(svos, entities)
+
             st.write("Extracted relationships:")
-            for s, v, o in svos:
+            for s, v, o in svos_resolved:
                 st.markdown(f"- **{s}** → _{v}_ → **{o}**")
 
-            html_path = build_graph(svos)
+            html_path = build_graph(svos_resolved)
             components.html(open(html_path, 'r', encoding='utf-8').read(), height=550)
-    else:
-        st.warning("Please enter some text")
