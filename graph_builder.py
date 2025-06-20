@@ -1,34 +1,55 @@
 import tempfile
 import json
 
-def build_graph(triples, filename="graph.html"):
-    """Build an interactive graph using vis.js directly"""
-    
-    # Prepare nodes and edges
+def build_graph(triples, entities, filename="graph.html"):
+    """Build an interactive graph using vis.js, enhanced with named entity types."""
+
+    # Flatten entity types into a lookup map
+    entity_type_map = {}
+    for ent_type, ent_list in entities.items():
+        for ent in ent_list:
+            entity_type_map[ent.lower()] = ent_type
+
+    # Map entity types to consistent node colors
+    def node_color(ent_type):
+        return {
+            "PERSON": "#8ecae6",  # Blue
+            "ORG": "#ffb703",     # Orange
+            "GPE": "#219ebc"      # Teal
+        }.get(ent_type, "#adb5bd")  # Gray fallback
+
+    def get_entity_type(phrase):
+        for word in phrase.lower().split():
+            if word in entity_type_map:
+                return entity_type_map[word]
+        return None
+
+    # Build nodes and edges
     nodes = {}
     edges = []
-    
-    for i, (subj, verb, obj) in enumerate(triples):
-        # Add subject node
-        if subj not in nodes:
-            nodes[subj] = {"id": subj, "label": subj, "color": "#97C2FC"}
-        
-        # Add object node
-        if obj not in nodes:
-            nodes[obj] = {"id": obj, "label": obj, "color": "#FFAB91"}
-        
-        # Add edge
+
+    for subj, verb, obj in triples:
+        for phrase in [subj, obj]:
+            if phrase not in nodes:
+                ent_type = get_entity_type(phrase)
+                color = node_color(ent_type)
+                nodes[phrase] = {
+                    "id": phrase,
+                    "label": phrase,
+                    "color": color
+                }
+
         edges.append({
             "from": subj,
             "to": obj,
             "label": verb,
             "arrows": "to"
         })
-    
-    # Convert nodes dict to list
+
+    # Finalize node list
     nodes_list = list(nodes.values())
-    
-    # Generate HTML with vis.js
+
+    # Generate HTML using vis.js
     html_content = f"""
     <!DOCTYPE html>
     <html>
@@ -86,10 +107,10 @@ def build_graph(triples, filename="graph.html"):
     </body>
     </html>
     """
-    
-    # Write to temporary file
+
+    # Write to a temporary file
     tmp_path = tempfile.NamedTemporaryFile(delete=False, suffix=".html").name
     with open(tmp_path, 'w', encoding='utf-8') as f:
         f.write(html_content)
-    
+
     return tmp_path

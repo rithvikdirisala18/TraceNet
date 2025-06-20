@@ -31,5 +31,5 @@ if st.button("Extract Relationships"):
             for s, v, o in svos_resolved:
                 st.markdown(f"- **{s}** → _{v}_ → **{o}**")
 
-            html_path = build_graph(svos_resolved)
+            html_path = build_graph(svos_resolved, entities)
             components.html(open(html_path, 'r', encoding='utf-8').read(), height=550)
