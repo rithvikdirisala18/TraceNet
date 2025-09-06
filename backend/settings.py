@@ -31,7 +31,7 @@ SECRET_KEY = "django-insecure-u(r7$w1bkbl)ivuef@l-2@3spy9hnhw*3tjo0av3i6gz6($a8h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["trace-net.vercel.app", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["tracenet-9uci.onrender.com", "trace-net.vercel.app", "127.0.0.1", "localhost"]
 
 
 # Application definition
