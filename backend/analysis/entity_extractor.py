@@ -4,7 +4,7 @@ import logging
 from collections import defaultdict
 import networkx as nx
 
-nlp = spacy.load("en_core_web_trf")
+nlp = spacy.load("en_core_web_sm")
 
 logging.basicConfig(level=logging.INFO)
 
