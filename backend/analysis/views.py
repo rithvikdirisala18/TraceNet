@@ -1,15 +1,9 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from backend.analysis.models import Entity, Relationship
+from analysis.models import Entity, Relationship
 from .entity_extractor import analyze_text
 # Create your views here.
-
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import Entity, Relationship
-from .entity_extractor import analyze_text
 
 @api_view(['POST'])
 def analyze_text_view(request):
