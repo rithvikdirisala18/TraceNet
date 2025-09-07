@@ -28,4 +28,6 @@ def analyze_text_view(request):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
-    return Response({'entities': entities, 'relationships': svos})
+@api_view(['GET', 'POST'])
+def health_check(request):
+    return Response({"status": "ok", "message": "API is working"})

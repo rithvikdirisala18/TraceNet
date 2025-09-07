@@ -57,11 +57,12 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
-
 CORS_ALLOWED_ORIGINS = [
     "https://trace-net.vercel.app",
+    "http://localhost:3000"
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = "urls"
 

@@ -14,8 +14,10 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setResults(null);
-
+  
     try {
+      console.log("Sending request to:", process.env.NEXT_PUBLIC_API_URL + "/api/analyze/");
+      
       const response = await fetch(
         process.env.NEXT_PUBLIC_API_URL + "/api/analyze/",
         {
@@ -24,15 +26,27 @@ export default function Home() {
           body: JSON.stringify({ text }),
         }
       );
-
+  
+      console.log("Response status:", response.status);
+      console.log("Response headers:", Object.fromEntries([...response.headers]));
+  
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Something went wrong");
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        throw new Error(`Server responded with ${response.status}: ${errorText || "No error details provided"}`);
       }
-
-      const data = await response.json();
+  
+      const responseText = await response.text();
+      console.log("Response text:", responseText);
+      
+      if (!responseText) {
+        throw new Error("Server returned an empty response");
+      }
+      
+      const data = JSON.parse(responseText);
       setResults(data);
     } catch (err) {
+      console.error("Error details:", err);
       setError(err.message);
     } finally {
       setLoading(false);
