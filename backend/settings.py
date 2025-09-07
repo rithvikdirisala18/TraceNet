@@ -25,9 +25,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-u(r7$w1bkbl)ivuef@l-2@3spy9hnhw*3tjo0av3i6gz6($a8h"
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -61,6 +58,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "https://trace-net.vercel.app",
+]
 
 ROOT_URLCONF = "urls"
 

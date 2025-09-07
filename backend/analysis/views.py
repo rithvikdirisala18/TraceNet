@@ -16,19 +16,22 @@ def analyze_text_view(request):
     text = request.data.get('text', '')
     if not text:
         return Response({'error': 'No text provided'}, status=400)
+    
+    try:
+        entities, svos, _ = analyze_text(text)
 
-    # Use entity_extractor.py to process the text
-    entities, svos, _ = analyze_text(text)
+        for entity_type, entity_list in entities.items():
+            for entity_name in entity_list:
+                Entity.objects.get_or_create(name=entity_name, entity_type=entity_type)
 
-    # Save entities to the database
-    for entity_type, entity_list in entities.items():
-        for entity_name in entity_list:
-            Entity.objects.get_or_create(name=entity_name, entity_type=entity_type)
+        for subj, verb, obj in svos:
+            subject_entity, _ = Entity.objects.get_or_create(name=subj)
+            object_entity, _ = Entity.objects.get_or_create(name=obj)
+            Relationship.objects.get_or_create(subject=subject_entity, verb=verb, object=object_entity)
 
-    # Save relationships to the database
-    for subj, verb, obj in svos:
-        subject_entity, _ = Entity.objects.get_or_create(name=subj)
-        object_entity, _ = Entity.objects.get_or_create(name=obj)
-        Relationship.objects.get_or_create(subject=subject_entity, verb=verb, object=object_entity)
+
+        return Response({'entities': entities, 'relationships': svos}, status=200)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 
     return Response({'entities': entities, 'relationships': svos})
